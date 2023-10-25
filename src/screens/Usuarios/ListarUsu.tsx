@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import { StyleSheet, View, TextInput } from 'react-native';
 import { ScrollView } from "react-native-gesture-handler";
 import { CustomButton } from "../../components/Common/Button";
 import { apiurl } from "../../Helpers/ApiUrl";
 import CardUsu from "../../components/Common/Card/carUsu";
-
+import { GlobalContext } from "../../Context/GlobalProvider";
 interface Usuario {
     nome: string;
     matricula: string;
@@ -14,8 +14,10 @@ interface Usuario {
 
 export const ListarUsu = ({ route, navigation }: any) => {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-    const [searchText, setSearchText] = useState<string>(''); 
-  
+    const [searchText, setSearchText] = useState<string>('');
+    const context = useContext(GlobalContext);
+const token = context?.token || ""; 
+    
 
     const { userAlterado, userDeletado, userCadastrado } = route.params || {};
 
@@ -26,22 +28,23 @@ export const ListarUsu = ({ route, navigation }: any) => {
     function getUsuarios() {
         const url = apiurl + "/user/list";
         fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            }
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Authorization': `Bearer ${token}` // Adicione o token no cabeçalho
+          }
         })
-            .then((resposta) => resposta.json())
-            .then((data) => {
-                const usuariosFormatados: Usuario[] = data.map((element: any) => ({
-                    nome: element.nome,
-                    matricula: element.matricula,
-                    foto: element.foto,
-                    id: element.id
-                }));
-                setUsuarios(usuariosFormatados);                
-            });
-    }
+          .then((resposta) => resposta.json())
+          .then((data) => {
+            const usuariosFormatados: Usuario[] = data.map((element: any) => ({
+              nome: element.nome,
+              matricula: element.matricula,
+              foto: element.foto,
+              id: element.id
+            }));
+            setUsuarios(usuariosFormatados);                
+          });
+      }
 
     
 

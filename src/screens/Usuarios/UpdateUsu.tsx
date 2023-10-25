@@ -1,13 +1,14 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { UsuariosComponente } from "../../components/Usuarios";
 import { apiurl } from '../../Helpers/ApiUrl';
 import { Text, View, Alert } from 'react-native';
-
+import { GlobalContext } from "../../Context/GlobalProvider";
 
 
 export const UpdateUsu = ({ route, navigation }: any) => {
-
+    const context = useContext(GlobalContext);
+    const token = context?.token || "";
     const { id } = route.params
     const [form, onChangeForm] = useState({
         nome: "",
@@ -36,7 +37,7 @@ export const UpdateUsu = ({ route, navigation }: any) => {
 
     };
     function validarVazio(nome: string, sobrenome: string, email: string, telefone1: string, matricula: string, cpf: string) {
-        if (!nome || !sobrenome || !email || !telefone1 || !matricula || !cpf ) {
+        if (!nome || !sobrenome || !email || !telefone1 || !matricula || !cpf) {
             setValida(true)
             return true
         }
@@ -118,7 +119,8 @@ export const UpdateUsu = ({ route, navigation }: any) => {
         fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json;charset=utf-8'
+                'Content-Type': 'application/json;charset=utf-8',
+                'Authorization': `Bearer ${token}`
             }
         })
             .then((resposta) => resposta.json())
@@ -181,7 +183,8 @@ export const UpdateUsu = ({ route, navigation }: any) => {
         fetch(url, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(form)
 
@@ -227,7 +230,8 @@ export const UpdateUsu = ({ route, navigation }: any) => {
         fetch(url, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json;charset=utf-8'
+                'Content-Type': 'application/json;charset=utf-8',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ id: id })
         }).then((resp) => resp.json()).then((data) => {
@@ -269,35 +273,35 @@ export const UpdateUsu = ({ route, navigation }: any) => {
 
     const showAlertUpdate = () => {
         Alert.alert(
-          'Alterar usuário',
-          'Deseja alterar este usuário?',
-          [
-            {
-              text: 'NÃO',
-              onPress: () => '',
-              style: 'cancel',
-            },
-            { text: 'SIM', onPress: () => updateUsuario() },
-          ],
-          { cancelable: false }
+            'Alterar usuário',
+            'Deseja alterar este usuário?',
+            [
+                {
+                    text: 'NÃO',
+                    onPress: () => '',
+                    style: 'cancel',
+                },
+                { text: 'SIM', onPress: () => updateUsuario() },
+            ],
+            { cancelable: false }
         );
-      };
-      
+    };
+
     const showAlertDelete = () => {
         Alert.alert(
-          'Deletar usuário',
-          'Deseja deletar este usuário?',
-          [
-            {
-              text: 'NÃO',
-              onPress: () => '',
-              style: 'cancel',
-            },
-            { text: 'SIM', onPress: () => deletarUsuario() },
-          ],
-          { cancelable: false }
+            'Deletar usuário',
+            'Deseja deletar este usuário?',
+            [
+                {
+                    text: 'NÃO',
+                    onPress: () => '',
+                    style: 'cancel',
+                },
+                { text: 'SIM', onPress: () => deletarUsuario() },
+            ],
+            { cancelable: false }
         );
-      };
+    };
 
     return (
         <>
@@ -305,7 +309,7 @@ export const UpdateUsu = ({ route, navigation }: any) => {
                 <Text style={{ color: "red", paddingLeft: 12 }}>Campos com * são obrigatórios.</Text>
                 : ""
             }
-            
+
             {validarEmailRegex ?
                 <View>
                     <Text style={{ color: "red", paddingLeft: 12 }}>O e-mail deve conter os seguintes itens:</Text>

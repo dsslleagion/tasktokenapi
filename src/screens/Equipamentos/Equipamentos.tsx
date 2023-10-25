@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { CadastrarEquipamento } from "../../components/Equipamentos/CadastrarEquipamento";
 import { Text, Alert } from 'react-native';
 import { apiurl } from "../../Helpers/ApiUrl";
 import Local from '@react-native-community/geolocation'
+import { GlobalContext } from "../../Context/GlobalProvider";
 
 export const Equipamentos = ({ navigation }: any) => {
     const [form, onChangeForm] = React.useState({
@@ -15,6 +16,9 @@ export const Equipamentos = ({ navigation }: any) => {
         tipo: '',
         modelo: ''
     })
+    const context = useContext(GlobalContext);
+    const token = context?.token || "";
+
 
     const [validaVazio, setValidaVazio] = useState(false)
     const [validaTipo, setValidaTipo] = useState(false) //sem nmr
@@ -102,7 +106,8 @@ export const Equipamentos = ({ navigation }: any) => {
         fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(form)
 

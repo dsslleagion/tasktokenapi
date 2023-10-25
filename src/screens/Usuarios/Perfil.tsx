@@ -12,7 +12,10 @@ import { apiurl } from "../../Helpers/ApiUrl";
 export const Perfil = () => {
     const [mostrarApenasTexto, setMostrarApenasTexto] = useState(false);
     const [loading, setLoading] = useState(false)
-    const {user}:any = useContext(GlobalContext)
+    const { user }: any = useContext(GlobalContext)
+    const context = useContext(GlobalContext);
+    const token = context?.token || "";
+
     const [form, onChangeForm] = React.useState({
         nome: "",
         sobrenome: "",
@@ -175,7 +178,8 @@ export const Perfil = () => {
         fetch(url, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(form)
 

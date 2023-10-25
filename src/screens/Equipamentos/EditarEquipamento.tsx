@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { CadastrarEquipamento } from "../../components/Equipamentos/CadastrarEquipamento";
 import { Text, Alert } from 'react-native';
 import { apiurl } from "../../Helpers/ApiUrl";
+import { GlobalContext } from "../../Context/GlobalProvider";
 
 export const EditarEquipamentos = ({ route, navigation }: any) => {
     const { id } = route.params
+    const context = useContext(GlobalContext);
+    const token = context?.token || "";
     const [form, onChangeForm] = React.useState({
         serial: '',
         latitude: '',
@@ -71,7 +74,8 @@ export const EditarEquipamentos = ({ route, navigation }: any) => {
         fetch(url, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(form)
 
@@ -118,7 +122,8 @@ export const EditarEquipamentos = ({ route, navigation }: any) => {
         fetch(url, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json;charset=utf-8'
+                'Content-Type': 'application/json;charset=utf-8',
+                'Authorization': `Bearer ${token}`
             }
         })
             .then((resposta) => resposta.json())

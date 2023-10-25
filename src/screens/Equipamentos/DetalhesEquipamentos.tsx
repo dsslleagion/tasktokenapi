@@ -9,6 +9,8 @@ import { GlobalContext } from "../../Context/GlobalProvider";
 
 export const DetalhesEquipamentos = ({ route, navigation }: any) => {
     const { id } = route.params
+    const context = useContext(GlobalContext);
+    const token = context?.token || "";
     const [form, onChangeForm] = React.useState({
         serial: '',
         latitude: '',
@@ -21,38 +23,36 @@ export const DetalhesEquipamentos = ({ route, navigation }: any) => {
         id: ""
     })
 
-    const context = useContext(GlobalContext); // Use o useContext para obter o contexto global
 
-  function getEquipamento() {
-    if (!context) {
-      console.error("Contexto global não encontrado.");
-      return;
+
+    function getEquipamento() {
+        const url = apiurl + '/equipment/get/' + id;
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then((resposta) => resposta.json())
+            .then((data) => {
+                if (data !== null) {
+                    onChangeForm({
+                        ...form,
+                        ...data,
+                        id: id
+                    });
+                }
+            });
     }
 
-    const url = apiurl + '/equipment/get/' + id;
 
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        'Authorization': `Bearer ${context.token}` // Adicione o token no cabeçalho
-      }
-    })
-      .then((resposta) => resposta.json())
-      .then((data) => {
-        if (data !== null) {
-          onChangeForm({
-            ...form,
-            ...data,
-            id: id
-          });
-        }
-      });
-  }
 
-  useEffect(() => {
-    getEquipamento();
-  }, []);
+    useEffect(() => {
+        getEquipamento();
+    }, []);
+
 
     return (
         <>
@@ -117,12 +117,12 @@ export const DetalhesEquipamentos = ({ route, navigation }: any) => {
                             <Text style={{ color: '#000000', textAlign: 'left', lineHeight: 28, marginLeft: 5 }}>{form.observacoes}</Text>
                         </View>
                     </View>
-                    
+
 
                 </View>
                 <View style={styles.ativarDesativar}>
-                            <SwitchComponent ativo={parseInt(form.status)} onChangeText={():any => ''} disable={true} key={form.status} />
-                        </View>
+                    <SwitchComponent ativo={parseInt(form.status)} onChangeText={(): any => ''} disable={true} key={form.status} />
+                </View>
             </ScrollView>
         </>
     );
